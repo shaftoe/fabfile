@@ -2,10 +2,10 @@
 from __future__ import print_function
 from os import chmod
 from os.path import (dirname, expanduser, join)
+from platform import (system, machine)
 from stat import S_IRWXU
 from subprocess import (call, check_output, CalledProcessError)
 from urlparse import urljoin
-from platform import (system, machine)
 from zipfile import (ZipFile, BadZipfile)
 
 from setuptools import find_packages
@@ -95,6 +95,7 @@ def setup_macos():
     if env.has_key('homebrew_apps'):
         for app in env.homebrew_apps.split(','):
             call(['brew', 'install', app])
+            call(['brew', 'link', app])
 
     # Install Cask
     call(['brew', 'tap', 'caskroom/cask'])
