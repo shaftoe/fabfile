@@ -17,7 +17,7 @@ try:
     from libdevsum import (TempDownloader, Validator)
 except ImportError:
     abort(red('Please install libdevsum package via pip:\n\n'
-              'pip install -e git+https://github.com/shaftoe/'
+              'pip install git+https://github.com/shaftoe/'
               'libdevsum.git#egg=libdevsum'))
 
 
@@ -75,13 +75,13 @@ def install_terraform(version=None):
 @task
 def setup_macos():
     """Setup a fresh macOS installation."""
-    # Install pip apps
-    pip_apps = [
-        'pip',
-        'ansible',
-    ]
-    for app in pip_apps:
-        call(['pip', 'install', '-U', app])
+    # Install/upgrade pip
+    call(['pip', 'install', '-U', 'pip'])
+
+    # Install/upgrade pip apps
+    if env.has_key('pip_apps'):
+        for app in env.pip_apps.split(','):
+            call(['pip', 'install', '-U', app])
 
     # Install Homebrew
     brew_url = 'https://raw.githubusercontent.com/Homebrew/'\
@@ -92,20 +92,22 @@ def setup_macos():
         call(['ruby', brew_install])
 
     # Install Homebrew apps
-    homebrew_apps = [
-        'asciicinema',
-        'git',
-    ]
-    for app in homebrew_apps:
-        call(['brew', 'install', app])
+    if env.has_key('homebrew_apps'):
+        for app in env.homebrew_apps.split(','):
+            call(['brew', 'install', app])
 
     # Install Cask
     call(['brew', 'tap', 'caskroom/cask'])
 
     # Install Cask apps
-    cask_apps = [
-        'dropbox',
-        'google-chrome',
-    ]
-    for app in cask_apps:
-        call(['brew', 'cask', 'install', app])
+    if env.has_key('cask_apps'):
+        for app in env.cask_apps.split(','):
+            call(['brew', 'cask', 'install', app])
+
+    # Install mas (Apple Store CLI)
+    call(['brew', 'install', 'mas'])
+
+    # Install Apple Store apps
+    if env.has_key('appstore_apps'):
+        for app in env.appstore_apps.split(','):
+            call(['mas', 'install', app])

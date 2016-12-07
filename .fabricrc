@@ -1,0 +1,5 @@
+# 803453959: slack
+appstore_apps = 803453959
+cask_apps = dropbox, firefox, google-chrome, spotify, sonos
+homebrew_apps = asciicinema, git
+pip_apps = ansible
