@@ -6,6 +6,10 @@ Those are custom scripts which I use from my [Linux|macOS] workstations, but the
 
 Install `terraform` binary in `~/bin` folder
 
+`fab install_terraform:0.7.13`
+
 ## setup_macos
 
 Setup macOS installing software via Pip / Homebrew / Cask / mas (Apple store). You can overwrite the default lists of software to be installed editing `fabricrc`
+
+`fab -c fabricrc setup_macos`
