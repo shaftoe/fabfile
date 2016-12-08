@@ -26,15 +26,22 @@ def validate():
     """Run validation on fabfile.py and libraries."""
     fabfile = env.real_fabfile
 
+    try:
+        check_output(['fab',
+                      '--config=/dev/null',
+                      '--fabfile=%s' % fabfile,
+                      '--list'])
+    except CalledProcessError, err:
+        abort(red('ERROR: can not run fab -l: %s' % err))
+
     modules = [join(dirname(fabfile), package)
                for package in find_packages(dirname(fabfile))]
     modules.append(fabfile)
 
     if all([Validator.linted(mod) for mod in modules]):
         print(green('All files linted succesfully'))
-        return True
     else:
-        print(red('Not valid'))
+        abort(red('Not valid'))
 
 
 @task
