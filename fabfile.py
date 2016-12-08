@@ -79,20 +79,21 @@ def setup_macos():
     call(['pip', 'install', '-U', 'pip'])
 
     # Install/upgrade pip apps
-    if env.has_key('pip_apps'):
+    if 'pip_apps' in env:
         for app in env.pip_apps.split(','):
             call(['pip', 'install', '-U', app])
 
-    # Install Homebrew
-    brew_url = 'https://raw.githubusercontent.com/Homebrew/'\
-               'install/master/install'
+    # Install Homebrew if not installed (requires sudo)
+    if not Validator.command_available('brew'):
+        brew_url = 'https://raw.githubusercontent.com/Homebrew/'\
+                   'install/master/install'
 
-    with TempDownloader(brew_url) as brew_install:
-        chmod(brew_install, S_IRWXU)
-        call(['ruby', brew_install])
+        with TempDownloader(brew_url) as brew_install:
+            chmod(brew_install, S_IRWXU)
+            call(['ruby', brew_install])
 
     # Install Homebrew apps
-    if env.has_key('homebrew_apps'):
+    if 'homebrew_apps' in env:
         for app in env.homebrew_apps.split(','):
             call(['brew', 'install', app])
             call(['brew', 'link', app])
@@ -101,7 +102,7 @@ def setup_macos():
     call(['brew', 'tap', 'caskroom/cask'])
 
     # Install Cask apps
-    if env.has_key('cask_apps'):
+    if 'cask_apps' in env:
         for app in env.cask_apps.split(','):
             call(['brew', 'cask', 'install', app])
 
@@ -109,6 +110,6 @@ def setup_macos():
     call(['brew', 'install', 'mas'])
 
     # Install Apple Store apps
-    if env.has_key('appstore_apps'):
+    if 'appstore_apps' in env:
         for app in env.appstore_apps.split(','):
             call(['mas', 'install', app])
