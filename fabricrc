@@ -1,6 +1,5 @@
-# 520993579: pwsafe
 # 803453959: slack
-appstore_apps = 520993579,803453959
-cask_apps = caffeine,docker,dropbox,firefox,gitter,google-chrome,kindle,iterm2,spotify,sonos,sublime-text,telegram-desktop,vagrant,virtualbox,viscosity,vlc
-homebrew_apps = asciinema,git
-pip_apps = ansible,virtualenv
+appstore_apps = 803453959
+cask_apps = firefox,google-chrome,iterm2
+homebrew_apps = git
+pip_apps = virtualenv

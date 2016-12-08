@@ -108,7 +108,6 @@ def setup_macos():
     if 'homebrew_apps' in env:
         for app in env.homebrew_apps.split(','):
             call(['brew', 'install', app])
-            call(['brew', 'link', app])
 
     # Install Cask
     call(['brew', 'tap', 'caskroom/cask'])
