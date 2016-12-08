@@ -11,7 +11,7 @@ from zipfile import (ZipFile, BadZipfile)
 from setuptools import find_packages
 
 from fabric.api import (abort, env, task)
-from fabric.colors import (green, red)
+from fabric.colors import (green, red, yellow)
 
 try:
     from libdevsum import (TempDownloader, Validator)
@@ -43,7 +43,7 @@ def install_terraform(version=None):
     if not Validator.semver(version):
         abort(red('Please provide a valid terraform version'))
 
-    dest_dir = join(expanduser('~'), 'bin')
+    dest_dir = join(expanduser('~'), '.local', 'bin')
     base_url = 'https://releases.hashicorp.com'
 
     if machine() == 'x86_64':
@@ -76,6 +76,8 @@ def install_terraform(version=None):
 def setup_macos():
     """Setup a fresh macOS installation."""
     # Install/upgrade pip
+    print(yellow('WARNING: installing Pip packages using --user flag\n'
+                 'please ensure ~/.local/bin is in your PATH'))
     call(['pip', 'install', '--user', '--upgrade', 'pip'])
 
     # Install/upgrade pip apps
@@ -85,6 +87,9 @@ def setup_macos():
 
     # Install Homebrew if not installed (requires sudo)
     if not Validator.command_available('brew'):
+        print(yellow('WARNING: "brew" command not available in PATH,\n'
+                     'will require sudo password in order to be installed'))
+
         brew_url = 'https://raw.githubusercontent.com/Homebrew/'\
                    'install/master/install'
 
@@ -111,5 +116,7 @@ def setup_macos():
 
     # Install Apple Store apps
     if 'appstore_apps' in env:
+        print(yellow('Installing apps from Apple Store, will ask '
+                     'for AppleID password'))
         for app in env.appstore_apps.split(','):
             call(['mas', 'install', app])

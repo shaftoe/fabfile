@@ -4,7 +4,7 @@ Those are custom scripts which I use from my [Linux|macOS] workstations, but the
 
 ## install_terraform
 
-Install `terraform` binary in `~/bin` folder
+Install `terraform` binary in `~/.local/bin` folder
 
 ```bash
 fab install_terraform:0.7.13
