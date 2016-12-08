@@ -1,0 +1,2 @@
+Fabric
+git+https://github.com/shaftoe/libdevsum.git#egg=libdevsum

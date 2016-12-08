@@ -3,4 +3,4 @@
 appstore_apps = 520993579,803453959
 cask_apps = caffeine,docker,dropbox,firefox,gitter,google-chrome,kindle,iterm2,spotify,sonos,sublime-text,telegram-desktop,vagrant,virtualbox,viscosity,vlc
 homebrew_apps = asciinema,git
-pip_apps = ansible
+pip_apps = ansible,virtualenv

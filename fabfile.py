@@ -76,12 +76,12 @@ def install_terraform(version=None):
 def setup_macos():
     """Setup a fresh macOS installation."""
     # Install/upgrade pip
-    call(['pip', 'install', '-U', 'pip'])
+    call(['pip', 'install', '--user', '--upgrade', 'pip'])
 
     # Install/upgrade pip apps
     if 'pip_apps' in env:
         for app in env.pip_apps.split(','):
-            call(['pip', 'install', '-U', app])
+            call(['pip', 'install', '--user', '--upgrade', app])
 
     # Install Homebrew if not installed (requires sudo)
     if not Validator.command_available('brew'):
