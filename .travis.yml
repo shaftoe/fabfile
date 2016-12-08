@@ -2,4 +2,7 @@ language: python
 python:
   - "2.7"
 # command to run tests
+install:
+  - pip install -r requirements.txt
+  - pip install -r test_requirements.txt
 script: "fab validate"

@@ -1,4 +1,4 @@
-# My [Fabric](http://www.fabfile.org/) tasks
+# My [Fabric](http://www.fabfile.org/) tasks [![Build Status](https://travis-ci.org/shaftoe/fabfile.svg?branch=master)](https://travis-ci.org/shaftoe/fabfile)
 
 Those are custom scripts which I use from my [Linux|macOS] workstations, but they should be easily configurable for your own needs; feel free to use at your own risk.
 
