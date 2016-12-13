@@ -1,8 +1,10 @@
 """Devsum's Fabric."""
 from __future__ import print_function
+import tarfile
 from os import chmod
-from os.path import (dirname, expanduser, join)
+from os.path import (dirname, exists, expanduser, join)
 from platform import (system, machine)
+from shutil import rmtree
 from stat import S_IRWXU
 from subprocess import (call, check_output, CalledProcessError)
 from urlparse import urljoin
@@ -77,6 +79,51 @@ def install_terraform(version=None):
 
         except (CalledProcessError, BadZipfile), err:
             print(red('Something wrong downloading %s: %s' % (url, err)))
+
+
+@task
+def install_golang(version=None):
+    """Install local Go environment."""
+    if not Validator.semver(version):
+        abort(red('Please provide a valid GoLang version'))
+
+    platform = system().lower()
+
+    if platform == 'darwin':
+        abort(red('Please use "brew cask" to install Go binary on macOS'))
+    elif platform != 'linux':
+        abort(red('%s platform not supported' % platform))
+
+    dest_dir = join(expanduser('~'), '.local', 'bin')
+    go_dir = join(dest_dir, 'go')
+    go_bin_dir = join(go_dir, 'bin')
+    go_bin = join(go_bin_dir, 'go')
+    base_url = 'https://storage.googleapis.com'
+
+    if machine() == 'x86_64':
+        arch = 'amd64'
+    else:
+        abort('Architecture not supported: %s' % machine())
+
+    file_path = 'golang/go%s.linux-%s.tar.gz' % (version, arch)
+    url = urljoin(base_url, file_path)
+
+    # Cleanup old installation if present
+    if exists(go_dir):
+        rmtree(go_dir)
+
+    try:
+        with TempDownloader(url) as temp_file:
+            with tarfile.open(temp_file) as tarball:
+                tarball.extractall(dest_dir)
+
+        print(green('Version installed: %s' %
+                    check_output([go_bin, 'version']).rstrip()))
+
+        print(yellow('Please remember to add `%s` to your PATH' % go_bin_dir))
+
+    except (CalledProcessError, tarfile.TarError), err:
+        abort(red('Something wrong downloading tarball: %s' % err))
 
 
 @task

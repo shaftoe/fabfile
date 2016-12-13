@@ -2,14 +2,6 @@
 
 Those are custom [Fabric](http://www.fabfile.org/) tasks which I use from my [Linux|macOS] workstations to avoid repeating tedious manual operations, but they should be easily configurable for your own needs; feel free to use at your own risk.
 
-## install_terraform
-
-Install `terraform` binary in `~/.local/bin` folder
-
-```bash
-fab install_terraform:0.7.13
-```
-
 ## setup_macos
 
 Install software via Pip / Homebrew / Cask / mas (Apple store) on a brand new macOS. You can overwrite the default lists of software to be installed editing `fabricrc`.
@@ -23,4 +15,20 @@ pip install --user -r requirements.txt  # using --user flag, no sudo password is
 export PATH=~/Library/Python/2.7/bin:$PATH  # ... but we need to extend PATH env variable
 open fabricrc  # to edit lists of app to be installed
 fab -c fabricrc setup_macos
+```
+
+## install_terraform
+
+Install `terraform` binary in `~/.local/bin` folder
+
+```bash
+fab install_terraform:0.7.13
+```
+
+## install_golang
+
+Install `go` environment in `~/.local/bin/go` folder
+
+```bash
+fab install_golang:1.7.4
 ```
