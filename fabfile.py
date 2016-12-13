@@ -16,7 +16,7 @@ from fabric.api import (abort, env, task)
 from fabric.colors import (green, red, yellow)
 
 try:
-    from libdevsum import (TempDownloader, Validator)
+    from libdevsum import (Repo, TempDownloader, Validator)
 except ImportError:
     abort(red('Please install libdevsum package via pip:\n\n'
               'pip install git+https://github.com/shaftoe/'
@@ -84,15 +84,22 @@ def install_terraform(version=None):
 @task
 def install_golang(version=None):
     """Install local Go environment."""
-    if not Validator.semver(version):
-        abort(red('Please provide a valid GoLang version'))
-
     platform = system().lower()
 
     if platform == 'darwin':
-        abort(red('Please use "brew cask" to install Go binary on macOS'))
+        abort(red('Please use "brew install go" to install Go environment '
+                  'on macOS'))
     elif platform != 'linux':
         abort(red('%s platform not supported' % platform))
+
+    if not version:
+        regexp = r'^refs/tags/go(\d+\.\d+\.\d+)$'
+        version = Repo.get_latest_remote_tag('https://go.googlesource.com/go',
+                                             regexp)
+        print(green('Installing latest stable version: %s' % version))
+
+    if not Validator.semver(version):
+        abort(red('GoLang version %s is invalid' % version))
 
     dest_dir = join(expanduser('~'), '.local', 'bin')
     go_dir = join(dest_dir, 'go')

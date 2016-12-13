@@ -27,8 +27,8 @@ fab install_terraform:0.7.13
 
 ## install_golang
 
-Install `go` environment in `~/.local/bin/go` folder
+Install `go` environment in `~/.local/bin/go` folder. If no version parameter is provided, will try to install latest available stable version.
 
 ```bash
-fab install_golang:1.7.4
+fab install_golang
 ```
