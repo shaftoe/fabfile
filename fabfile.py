@@ -49,16 +49,22 @@ def validate():
 @task
 def install_terraform(version=None):
     """Install local terraform binary."""
+    if machine() == 'x86_64':
+        arch = 'amd64'
+    else:
+        abort('Architecture not supported: %s' % machine())
+
+    if not version:
+        regexp = r'^refs/tags/v(\d+\.\d+\.\d+)$'
+        source_url = 'https://github.com/hashicorp/terraform.git'
+        version = Repo.get_latest_remote_tag(source_url, regexp)
+        print(green('Installing latest stable version: %s' % version))
+
     if not Validator.semver(version):
         abort(red('Please provide a valid terraform version'))
 
     dest_dir = join(expanduser('~'), '.local', 'bin')
     base_url = 'https://releases.hashicorp.com'
-
-    if machine() == 'x86_64':
-        arch = 'amd64'
-    else:
-        abort('Architecture not supported: %s' % machine())
 
     file_path = 'terraform/%s/terraform_%s_%s_%s.zip' % (version,
                                                          version,

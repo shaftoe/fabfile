@@ -19,7 +19,7 @@ fab -c fabricrc setup_macos
 
 ## install_terraform
 
-Install `terraform` binary in `~/.local/bin` folder
+Install `terraform` binary in `~/.local/bin` folder. If no version parameter is provided, will try to install latest available stable version.
 
 ```bash
 fab install_terraform:0.7.13
