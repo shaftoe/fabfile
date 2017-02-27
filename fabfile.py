@@ -49,6 +49,14 @@ def validate():
 @task
 def install_terraform(version=None):
     """Install local terraform binary."""
+    platform = system().lower()
+
+    if platform == 'darwin':
+        abort(red('Please use "brew install terraform" to install '
+                  'terraform on macOS'))
+    elif platform != 'linux':
+        abort(red('%s platform not supported' % platform))
+
     if machine() == 'x86_64':
         arch = 'amd64'
     else:
