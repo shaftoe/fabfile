@@ -1,7 +1,7 @@
 """Devsum's Fabric."""
 from __future__ import print_function
 import tarfile
-from os import chmod
+from os import (chmod, environ)
 from os.path import (dirname, exists, expanduser, join)
 from platform import (system, machine)
 from shutil import rmtree
@@ -149,7 +149,7 @@ def install_golang(version=None):
 
 @task
 def setup_macos():
-    """Setup a fresh macOS installation."""
+    """Do setup a fresh macOS installation."""
     # Install/upgrade pip
     print(yellow('WARNING: installing Pip packages using --user flag\n'
                  'please ensure ~/.local/bin is in your PATH'))
@@ -194,3 +194,30 @@ def setup_macos():
                      'for AppleID password'))
         for app in env.appstore_apps.split(','):
             call(['mas', 'install', app])
+
+
+@task
+def dockerize_go(image_name=None):
+    """Compile static Go binary and package it into a scratch Docker image."""
+    if not image_name:
+        abort(red('Please provide a name for the Docker image'))
+    if not exists('main.go'):
+        abort(red('main.go not found in current directory'))
+
+    print(green("Compile main.go static binary into ./main"))
+    my_env = environ.copy()
+    my_env.update({'CGO_ENABLED': '0', 'GOOS': 'linux'})
+    call(["go", "build", "-a", "-installsuffix", "cgo", "-o", "main", "."],
+         env=my_env)
+
+    print(green("Build the Docker %s image, generate Dockerfile "
+                "in current directory..." % image_name))
+    with open('Dockerfile', 'w') as dockerfile:
+        dockerfile.write('''FROM scratch
+ADD main /
+CMD ["/main"]''')
+    call(["docker", "build", "--no-cache", "--tag", image_name, "."])
+
+    print(green('''Docker image %s is ready to be run, e.g.:
+
+$ docker run --rm %s''' % (image_name, image_name)))

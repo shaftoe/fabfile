@@ -32,3 +32,11 @@ Install `go` environment in `~/.local/bin/go` folder. If no version parameter is
 ```bash
 fab install_golang
 ```
+
+## dockerize_go
+
+Build a static Go binary (`main.go`) and package it into a minimal Docker container, as [described here](https://blog.codeship.com/building-minimal-docker-containers-for-go-applications/)
+
+```bash
+fab dockerize_go:goisawesome
+```
