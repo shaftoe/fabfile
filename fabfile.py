@@ -207,6 +207,7 @@ def dockerize_go(image_name=None):
     print(green("Compile main.go static binary into ./main"))
     my_env = environ.copy()
     my_env.update({'CGO_ENABLED': '0', 'GOOS': 'linux'})
+    call(["go", "get", "-v"])
     call(["go", "build", "-a", "-installsuffix", "cgo", "-o", "main", "."],
          env=my_env)
 
