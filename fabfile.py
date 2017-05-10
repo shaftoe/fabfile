@@ -41,7 +41,7 @@ def validate():
     modules.append(fabfile)
 
     if all([Validator.linted(mod) for mod in modules]):
-        print(green('All files linted succesfully'))
+        print(green('All files linted successfully'))
     else:
         abort(red('Not valid'))
 
@@ -176,6 +176,7 @@ def setup_macos():
     if 'homebrew_apps' in env:
         for app in env.homebrew_apps.split(','):
             call(['brew', 'install', app])
+            call(['brew', 'upgrade', app])
 
     # Install Cask
     call(['brew', 'tap', 'caskroom/cask'])
