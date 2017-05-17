@@ -178,7 +178,7 @@ def setup_macos():
             call(['brew', 'install', app])
             call(['brew', 'upgrade', app])
 
-    # Install Python3
+    # Python3: https://pymotw.com/3/ensurepip/
     call(['brew', 'install', 'python3'])
     call(['python3', '-m', 'ensurepip', '--upgrade'])
 
