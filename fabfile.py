@@ -178,6 +178,10 @@ def setup_macos():
             call(['brew', 'install', app])
             call(['brew', 'upgrade', app])
 
+    # Install Python3
+    call(['brew', 'install', 'python3'])
+    call(['python3', '-m', 'ensurepip', '--upgrade'])
+
     # Install Cask
     call(['brew', 'tap', 'caskroom/cask'])
 
