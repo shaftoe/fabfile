@@ -190,6 +190,13 @@ def setup_macos():
         for app in env.cask_apps.split(','):
             call(['brew', 'cask', 'install', app])
 
+    # Upgrade Cask apps
+    cask_outdated = check_output(['brew', 'cask', 'outdated']).split()
+    if cask_outdated:
+        for app in cask_outdated:
+            print(yellow('Reinstalling cask %s' % app))
+            call(['brew', 'cask', 'reinstall', app])
+
     # Install mas (Apple Store CLI)
     call(['brew', 'install', 'mas'])
 
