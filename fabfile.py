@@ -172,6 +172,11 @@ def setup_macos():
             chmod(brew_install, S_IRWXU)
             call(['ruby', brew_install])
 
+    # Install NPM apps
+    if 'npm_apps' in env:
+        for app in env.npm_apps.split(','):
+            call(['npm', 'install', '-g', app])
+
     # Install Homebrew apps
     if 'homebrew_apps' in env:
         for app in env.homebrew_apps.split(','):
