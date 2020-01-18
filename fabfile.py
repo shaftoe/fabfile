@@ -12,8 +12,9 @@ from zipfile import (ZipFile, BadZipfile)
 
 from setuptools import find_packages
 
-from fabric.api import (abort, env, task)
+from fabric.api import (abort, env, sudo, task)
 from fabric.colors import (green, red, yellow)
+from fabric.contrib.files import append
 
 try:
     from libdevsum import (Repo, TempDownloader, Validator)
@@ -172,16 +173,19 @@ def setup_macos():
             chmod(brew_install, S_IRWXU)
             call(['ruby', brew_install])
 
-    # Install NPM apps
-    if 'npm_apps' in env:
-        for app in env.npm_apps.split(','):
-            call(['npm', 'install', '-g', app])
+    # Upgrade outdated homebrew apps
+    call(['brew', 'upgrade'])
 
     # Install Homebrew apps
     if 'homebrew_apps' in env:
         for app in env.homebrew_apps.split(','):
             call(['brew', 'install', app])
-            call(['brew', 'upgrade', app])
+
+    # Install NPM apps
+    call(['brew', 'install', '-g', 'node'])
+    if 'npm_apps' in env:
+        for app in env.npm_apps.split(','):
+            call(['npm', 'install', '-g', app])
 
     # Python3: https://pymotw.com/3/ensurepip/
     call(['brew', 'install', 'python3'])
@@ -201,6 +205,9 @@ def setup_macos():
         for app in cask_outdated:
             print(yellow('Reinstalling cask %s' % app))
             call(['brew', 'cask', 'reinstall', app])
+
+    # Homebrew cleanup
+    call(['brew', 'cleanup'])
 
     # Install mas (Apple Store CLI)
     call(['brew', 'install', 'mas'])
@@ -239,3 +246,61 @@ CMD ["/main"]''')
     print(green('''Docker image %s is ready to be run, e.g.:
 
 $ docker run --rm %s''' % (image_name, image_name)))
+
+
+@task
+def create_aws_subaccount(profile, email, account_name):
+    """Create a new AWS sub-account linked to the given profile."""
+    cmd = 'aws --profile {0} organizations create-account --email {1} ' \
+          '--account-name {2} --role-name admin ' \
+		  '--iam-user-access-to-billing ALLOW --output text ' \
+          "--query CreateAccountStatus.Id".format(profile, email, account_name)
+    call(cmd.split())
+
+
+@task
+def print_report():
+    from fabric.api import sudo
+    cmds = (
+        ('uname -a', 'Check Linux kernel version'),
+        ('lsb_release -a', 'Check Debian version'),
+        ('uptime', 'Check uptime'),
+        ('free', 'Check ram/swap usage'),
+        ('pstree', 'Check running processes'),
+        ('df -l -h', 'Check block volume usage (size)'),
+        ('df -l -i', 'Check block volume usage (inodes)'),
+        ('lsof -i -n', 'Check open Internet sockets'),
+        ('cat /etc/passwd', 'Check available Unix users'),
+        ('iptables-save', 'Check firewall rules'),
+        ('pvs', 'Check LVM physical volume'),
+        ('vgs', 'Check LVM volume groups'),
+        ('lvs', 'Check LVM logical volumes'),
+        ('grep -i "error" /var/log/*', 'Search for errors in logs'),
+        ('apt-get update > /dev/null 2>&1 ; apt-get dist-upgrade --quiet --just-print', 'Show upgradable packages'),
+    )
+    for cmd, comment in cmds:
+        print('#### ' + comment + ' ####')
+        sudo(cmd)
+
+@task
+def install_vmware_tools():
+    """https://kb.vmware.com/s/article/1018414"""
+    # https://stackoverflow.com/questions/12104185/how-to-set-memory-limit-in-my-cnf-file#12104312
+    from fabric.api import cd, sudo
+    # mountpoint /mnt
+    # sudo('mount /dev/cdrom /mnt')
+    # with cd('/tmp/'):
+    #     sudo('tar xzf /mnt/*tar.gz')
+    #     sudo('cd vmware-tools-distrib && ./vmware-install.pl')
+    with cd('/tmp/'):
+        sudo('ls')
+    # sudo('umount /mnt')
+
+@task
+def install_salt_minion():
+    """Install Salt minion on Stretch Debian host."""
+    sudo('wget -O - https://repo.saltstack.com/apt/debian/9/amd64/latest/SALTSTACK-GPG-KEY.pub | apt-key add -')
+    append('/etc/apt/sources.list.d/saltstack.list',
+           'deb http://repo.saltstack.com/apt/debian/9/amd64/latest stretch main',
+           use_sudo=True)
+    sudo('apt-get update > /dev/null && apt-get install -y salt-minion')
