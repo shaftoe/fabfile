@@ -192,7 +192,7 @@ def setup_macos():
     call(['python3', '-m', 'ensurepip', '--upgrade'])
 
     # Install Cask
-    call(['brew', 'tap', 'caskroom/cask'])
+    call(['brew', 'tap', 'caskroom/cask-cask'])
 
     # Install Cask apps
     if 'cask_apps' in env:
