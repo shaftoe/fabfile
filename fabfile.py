@@ -183,6 +183,7 @@ def setup_macos():
 
     # Install NPM apps
     call(['brew', 'install', '-g', 'node'])
+    call(['npm', 'install', '-g', 'npm'])
     if 'npm_apps' in env:
         for app in env.npm_apps.split(','):
             call(['npm', 'install', '-g', app])
