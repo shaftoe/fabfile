@@ -198,11 +198,8 @@ def setup_macos():
             call(['brew', 'cask', 'install', app])
 
     # Upgrade Cask apps
-    cask_outdated = check_output(['brew', 'cask', 'outdated']).split()
-    if cask_outdated:
-        for app in cask_outdated:
-            print(yellow('Reinstalling cask %s' % app))
-            call(['brew', 'cask', 'reinstall', app])
+    # https://stackoverflow.com/questions/31968664/upgrade-all-the-casks-installed-via-homebrew-cask
+    call(['brew', 'cask', 'upgrade'])
 
     # Homebrew cleanup
     call(['brew', 'cleanup'])
