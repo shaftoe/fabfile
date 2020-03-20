@@ -173,13 +173,13 @@ def setup_macos():
             chmod(brew_install, S_IRWXU)
             call(['ruby', brew_install])
 
-    # Upgrade outdated homebrew apps
-    call(['brew', 'upgrade'])
-
     # Install Homebrew apps
     if 'homebrew_apps' in env:
         for app in env.homebrew_apps.split(','):
             call(['brew', 'install', app])
+
+    # Upgrade outdated Homebrew apps
+    call(['brew', 'upgrade'])
 
     # Install NPM apps
     call(['brew', 'install', '-g', 'node'])
@@ -201,11 +201,11 @@ def setup_macos():
     # https://stackoverflow.com/questions/31968664/upgrade-all-the-casks-installed-via-homebrew-cask
     call(['brew', 'cask', 'upgrade'])
 
-    # Homebrew cleanup
-    call(['brew', 'cleanup'])
-
     # Install mas (Apple Store CLI)
     call(['brew', 'install', 'mas'])
+
+    # Homebrew cleanup
+    call(['brew', 'cleanup'])
 
     # Install Apple Store apps
     if 'appstore_apps' in env:
