@@ -173,33 +173,39 @@ def setup_macos():
             chmod(brew_install, S_IRWXU)
             call(['ruby', brew_install])
 
-    # Install Homebrew apps
-    if 'homebrew_apps' in env:
-        for app in env.homebrew_apps.split(','):
-            call(['brew', 'install', app])
-
     # Upgrade outdated Homebrew apps
     call(['brew', 'upgrade'])
 
+    # Install Homebrew apps
+    installed_apps = check_output(["brew", "list"]).decode("utf-8").split()
+    if 'homebrew_apps' in env:
+        for app in env.homebrew_apps.split(','):
+            if app not in installed_apps:
+                call(['brew', 'install', app])
+
     # Install NPM apps
-    call(['brew', 'install', '-g', 'node'])
+    if "node" not in installed_apps:
+        call(['brew', 'install', '-g', 'node'])
     call(['npm', 'install', '-g', 'npm'])
     if 'npm_apps' in env:
         for app in env.npm_apps.split(','):
             call(['npm', 'install', '-g', app])
 
     # Python3: https://pymotw.com/3/ensurepip/
-    call(['brew', 'install', 'python3'])
-    call(['python3', '-m', 'ensurepip', '--upgrade'])
+    if "python3" not in installed_apps:
+        call(['brew', 'install', 'python3'])
+        call(['python3', '-m', 'ensurepip', '--upgrade'])
 
-    # Install Cask apps
-    if 'cask_apps' in env:
-        for app in env.cask_apps.split(','):
-            call(['brew', 'cask', 'install', app])
-
-    # Upgrade Cask apps
+    # Upgrade already installed Cask apps
     # https://stackoverflow.com/questions/31968664/upgrade-all-the-casks-installed-via-homebrew-cask
     call(['brew', 'cask', 'upgrade'])
+
+    # Install Cask apps
+    installed_apps = check_output(["brew", "cask", "list"]).decode("utf-8").split()
+    if 'cask_apps' in env:
+        for app in env.cask_apps.split(','):
+            if app not in installed_apps:
+                call(['brew', 'cask', 'install', app])
 
     # Install mas (Apple Store CLI)
     call(['brew', 'install', 'mas'])
